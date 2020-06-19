@@ -66,7 +66,7 @@ module StripeMock
           raise Stripe::InvalidRequestError.new(missing_param_message(k), k) if params[k].nil?
         end
 
-        if !%w[good service].include?(params[:type]) || params[:type].nil?
+        if params[:type].present? && !%w[good service].include?(params[:type])
           raise Stripe::InvalidRequestError.new("Invalid type: must be one of good or service", :type)
         end
 

@@ -13,7 +13,7 @@ module StripeMock
       def create_product_params(params={})
         {
           :id => 'stripe_mock_default_product_id',
-          :name => 'Default Product',
+          :name => 'Default Product'
         }.merge(params)
       end
 
