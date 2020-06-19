@@ -1,17 +1,17 @@
 module StripeMock
   module RequestHandlers
-    module Products
+    module Prices
       def self.included(base)
         base.add_handler 'post /v1/prices',        :create_price
         base.add_handler 'get /v1/prices/(.*)',    :retrieve_price
-        base.add_handler 'post /v1/products/(.*)',   :update_price
-        base.add_handler 'get /v1/products',         :list_price
+        base.add_handler 'post /v1/prices/(.*)',   :update_price
+        base.add_handler 'get /v1/prices',         :list_price
       end
 
       def create_price(_route, _method_url, params, _headers)
         params[:id] ||= new_id('price')
         validate_create_price_params(params)
-        prices[params[:id]] = Data.mock_product(params)
+        prices[params[:id]] = Data.mock_price(params)
       end
 
       def retrieve_price(route, method_url, _params, _headers)

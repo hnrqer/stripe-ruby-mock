@@ -10,7 +10,6 @@ module StripeMock
       end
 
       def create_product(_route, _method_url, params, _headers)
-        binding.pry
         params[:id] ||= new_id('prod')
         validate_create_product_params(params)
         products[params[:id]] = Data.mock_product(params)
