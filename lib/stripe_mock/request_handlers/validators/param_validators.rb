@@ -18,10 +18,47 @@ module StripeMock
         "Invalid integer: #{my_val}"
       end
 
+
+      #
+      # PriceValidator
+      #
+
+      def validate_create_price_params(params)
+        params[:id] = params[:id].to_s
+        @base_strategy.create_price_params.keys.reject{ |k,_| k == :id }.each do |k|
+          raise Stripe::InvalidRequestError.new(missing_param_message(k), k) if params[k].nil?
+        end
+
+        unless SUPPORTED_CURRENCIES.include?(params[:currency])
+          message = invalid_currency_message(params[:currency])
+          raise Stripe::InvalidRequestError.new(message, :currency)
+        end
+
+        unless params[:unit_amount].integer?
+          message = invalid_integer_message(params[:unit_amount])
+          raise Stripe::InvalidRequestError.new(message, :unit_amount)
+        end
+
+        if params[:recurring]
+          if params[:recurring][:interval] && !SUPPORTED_PLAN_INTERVALS.include?(params[:recurring][:interval])
+            message = invalid_plan_interval_message
+            raise Stripe::InvalidRequestError.new(message, :interval)
+          end
+
+          if params[:recurring][:interval_count] && (!params[:recurring][:interval_count].integer? || params[:recurring][:interval_count]  < 0)
+            message = invalid_integer_message
+            raise Stripe::InvalidRequestError.new(message, :interval_count)
+          end
+        end
+
+        if price[ params[:id] ]
+          raise Stripe::InvalidRequestError.new(already_exists_message(Stripe::Price), :id)
+        end
+      end
+
       #
       # ProductValidator
       #
-
 
       def validate_create_product_params(params)
         params[:id] = params[:id].to_s
@@ -29,7 +66,7 @@ module StripeMock
           raise Stripe::InvalidRequestError.new(missing_param_message(k), k) if params[k].nil?
         end
 
-        if !%w[good service].include?(params[:type])
+        if !%w[good service].include?(params[:type]) || params[:type].nil?
           raise Stripe::InvalidRequestError.new("Invalid type: must be one of good or service", :type)
         end
 

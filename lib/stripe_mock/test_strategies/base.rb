@@ -14,7 +14,14 @@ module StripeMock
         {
           :id => 'stripe_mock_default_product_id',
           :name => 'Default Product',
-          :type => 'service'
+        }.merge(params)
+      end
+
+      def create_price_params(params={})
+        {
+          :id => 'stripe_mock_default_price_id',
+          :currency => 'usd',
+          :product => 'stripe_mock_default_product_id'
         }.merge(params)
       end
 
