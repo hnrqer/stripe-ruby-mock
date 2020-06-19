@@ -80,6 +80,7 @@ module StripeMock
       @orders = {}
       @payment_methods = {}
       @plans = {}
+      @prices = {}
       @products = {}
       @recipients = {}
       @refunds = {}
